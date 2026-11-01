@@ -5,7 +5,6 @@
   let hasPlayed = false;
 
   try { hasPlayed = sessionStorage.getItem('bootPlayed') === 'true'; } catch (e) {}
-
   if (hasPlayed || prefersReducedMotion) {
     bootDiv.style.display = 'none';
     return;
@@ -18,25 +17,21 @@
     { id: 'boot-4', text: 'LINK ESTABLISHED.', delay: 1400 }
   ];
 
-  lines.forEach(line => {
-    setTimeout(() => { document.getElementById(line.id).textContent = line.text; }, line.delay);
-  });
-
+  lines.forEach(line => { setTimeout(() => { document.getElementById(line.id).textContent = line.text; }, line.delay); });
   const finishBoot = () => {
     bootDiv.classList.add('hidden');
     try { sessionStorage.setItem('bootPlayed', 'true'); } catch (e) {}
     setTimeout(() => { bootDiv.style.display = 'none'; }, 400); 
   };
-
   setTimeout(finishBoot, 1800);
-  
   window.addEventListener('keydown', finishBoot, { once: true });
   window.addEventListener('click', finishBoot, { once: true });
-  window.addEventListener('touchstart', finishBoot, { once: true });
 })();
 
 /* --- SPECTROMETER DSP & ANIMATION --- */
 (function initSpectrometer() {
+  // Physical alignment: 0 to 983.04 MHz mapped to 256 bins.
+  // Bin spacing = 3.84 MHz/bin
   const M = 512; 
   const P = 4;   
   const N = M * P; 
@@ -55,6 +50,7 @@
   let accumulatedPower = new Float64Array(M/2);
   
   let accumulations = 0;
+  let framesProcessed = 0; // Tracks total frames including warm-up
   let showSpurs = false;
   let isAnimating = false;
   let activeNode = -1;
@@ -72,7 +68,6 @@
   const bitRev = new Uint16Array(M);
   const cosT = new Float64Array(M/2);
   const sinT = new Float64Array(M/2);
-  
   let bits = Math.log2(M);
   for (let i = 0; i < M; i++) {
     let rev = 0, num = i;
@@ -114,12 +109,9 @@
 
   let spareRandom = null;
   function randn() {
-    if (spareRandom !== null) {
-      let v = spareRandom; spareRandom = null; return v;
-    }
+    if (spareRandom !== null) { let v = spareRandom; spareRandom = null; return v; }
     let u = 0, v = 0;
-    while(u === 0) u = Math.random();
-    while(v === 0) v = Math.random();
+    while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
     let mag = Math.sqrt(-2.0 * Math.log(u));
     spareRandom = mag * Math.cos(2.0 * Math.PI * v);
     return mag * Math.sin(2.0 * Math.PI * v);
@@ -136,57 +128,88 @@
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas(); 
 
+  // Clickable canvas labels
+  const labelLinks = [
+    { bin: 40, text: 'RESEARCH', target: '#sec-02' },
+    { bin: 155, text: 'INSTRUMENT', target: '#sec-03' },
+    { bin: 215, text: 'FIELD KIT', target: '#sec-04' },
+    { bin: 245, text: 'OFF-DUTY', target: '#sec-05' }
+  ];
+  
+  canvasFreq.addEventListener('mousemove', (e) => {
+    if (accumulations < MAX_ACC) return;
+    const rect = canvasFreq.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    let isHover = labelLinks.some(l => {
+      let lx = (l.bin / (M/2)) * rect.width;
+      return (Math.abs(x - lx) < 30 && y > rect.height - 40);
+    });
+    canvasFreq.style.cursor = isHover ? 'pointer' : 'default';
+  });
+
+  canvasFreq.addEventListener('click', (e) => {
+    if (accumulations < MAX_ACC) return;
+    const rect = canvasFreq.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    labelLinks.forEach(l => {
+      let lx = (l.bin / (M/2)) * rect.width;
+      if (Math.abs(x - lx) < 30 && y > rect.height - 40) {
+        document.querySelector(l.target).scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
   function processFrame() {
     if (accumulations >= MAX_ACC) return; 
 
-    const f_s = M;
-    const toneAmp = 0.22; 
-    const f0 = 100.3; 
+    // Tone parameters adjusted for visibility scaling
+    const toneAmp = 0.11; 
     
-    for (let i = 0; i < N - M; i++) {
-      signalBuffer[i] = signalBuffer[i + M];
-    }
+    // Bin placements mapped directly to the 256-bin physical spectrum
+    const binToFreq = (b) => (b / (M/2)) * (M/2);
     
-    const offset = accumulations * M;
+    for (let i = 0; i < N - M; i++) { signalBuffer[i] = signalBuffer[i + M]; }
+    
+    const offset = framesProcessed * M;
     for (let i = 0; i < M; i++) {
       let n = offset + i;
       let val = randn(); 
-      val += toneAmp * Math.sin(2 * Math.PI * f0 * n / f_s);
+      // Main Tone (Bin 102.4 = 393.216 MHz)
+      val += toneAmp * Math.sin(2 * Math.PI * binToFreq(102.4) * n / M);
       
-      val += 0.08 * Math.sin(2 * Math.PI * 30.2 * n / f_s); 
-      val += 0.08 * Math.sin(2 * Math.PI * 180.1 * n / f_s); 
-      val += 0.08 * Math.sin(2 * Math.PI * 200.4 * n / f_s); 
-      val += 0.08 * Math.sin(2 * Math.PI * 230.7 * n / f_s); 
+      // Secondary markers
+      val += 0.04 * Math.sin(2 * Math.PI * binToFreq(40) * n / M); 
+      val += 0.04 * Math.sin(2 * Math.PI * binToFreq(155) * n / M); 
+      val += 0.04 * Math.sin(2 * Math.PI * binToFreq(215) * n / M); 
+      val += 0.04 * Math.sin(2 * Math.PI * binToFreq(245) * n / M); 
 
+      // 245.76 MHz Clock spurs (Bins 64, 128, 192)
       if (showSpurs) {
-        for(let s = 1; s < 10; s++) {
-          val += 0.04 * Math.sin(2 * Math.PI * (s * 25) * n / f_s);
-        }
+        val += 0.04 * Math.sin(2 * Math.PI * binToFreq(64) * n / M);
+        val += 0.04 * Math.sin(2 * Math.PI * binToFreq(128) * n / M);
+        val += 0.04 * Math.sin(2 * Math.PI * binToFreq(192) * n / M);
       }
       signalBuffer[(N - M) + i] = val;
     }
 
     for (let i = 0; i < M; i++) {
       let sum = 0;
-      for (let p = 0; p < P; p++) {
-        sum += signalBuffer[i + p * M] * filter[i + p * M];
-      }
+      for (let p = 0; p < P; p++) { sum += signalBuffer[i + p * M] * filter[i + p * M]; }
       pfbOut[i] = sum;
       real[i] = sum;
       imag[i] = 0;
     }
-
     doFFT();
+    for (let i = 0; i < M/2; i++) { power[i] = (real[i]*real[i] + imag[i]*imag[i]); }
 
-    for (let i = 0; i < M/2; i++) {
-      power[i] = (real[i]*real[i] + imag[i]*imag[i]);
+    // Drop first P-1 frames to avoid warm-up noise drag
+    framesProcessed++;
+    if (framesProcessed >= P) {
+      accumulations++;
+      for (let i = 0; i < M/2; i++) { accumulatedPower[i] += power[i]; }
     }
-
-    accumulations++;
-    for (let i = 0; i < M/2; i++) {
-      accumulatedPower[i] += power[i];
-    }
-    
     updateReadouts();
   }
 
@@ -194,19 +217,21 @@
     document.getElementById('spec-accum').textContent = `ACCUMULATIONS: ${accumulations} / ${MAX_ACC}`;
     
     if (accumulations > 0) {
-      let sumNoise = 0;
+      // Find median noise for accurate SNR calculation
+      let powers = [];
       let peak = 0;
       for(let i=10; i < M/2 - 10; i++) { 
         let p = accumulatedPower[i] / accumulations;
+        powers.push(p);
         if(p > peak) peak = p;
-        sumNoise += p;
       }
-      let meanNoise = sumNoise / (M/2 - 20);
-      let snr = 10 * Math.log10(peak / meanNoise);
-      document.getElementById('spec-snr').textContent = `SNR &approx; ${snr.toFixed(1)} dB`;
+      powers.sort((a,b) => a - b);
+      let medianNoise = powers[Math.floor(powers.length / 2)];
+      let snr = 10 * Math.log10(peak / medianNoise);
+      document.getElementById('spec-snr').textContent = `PEAK/MEAN ≈ ${snr.toFixed(1)} dB`;
     }
 
-    if(accumulations < 10) {
+    if(accumulations > 0 && accumulations < 10) {
       if(activeNode !== -1) document.getElementById(`node-${activeNode}`).classList.remove('active');
       activeNode = (activeNode + 1) % 6;
       document.getElementById(`node-${activeNode}`).classList.add('active');
@@ -218,66 +243,52 @@
 
   function draw() {
     const dpr = window.devicePixelRatio || 1;
-    
     const wT = canvasTime.width, hT = canvasTime.height;
     ctxTime.fillStyle = '#04070b';
     ctxTime.fillRect(0, 0, wT, hT);
     
-    ctxTime.beginPath();
-    ctxTime.strokeStyle = '#6b8794';
-    ctxTime.lineWidth = 1 * dpr;
-    const yCenter = hT / 2;
-    const scaleT = hT / 8; 
+    ctxTime.beginPath(); ctxTime.strokeStyle = '#6b8794'; ctxTime.lineWidth = 1 * dpr;
+    const yCenter = hT / 2; const scaleT = hT / 8; 
     
     for (let i = 0; i < M; i++) {
       let x = (i / M) * wT;
       let y = yCenter - (signalBuffer[(N - M) + i] * scaleT);
-      if (i === 0) ctxTime.moveTo(x, y);
-      else ctxTime.lineTo(x, y);
+      if (i === 0) ctxTime.moveTo(x, y); else ctxTime.lineTo(x, y);
     }
     ctxTime.stroke();
 
     const wF = canvasFreq.width, hF = canvasFreq.height;
-    ctxFreq.fillStyle = '#04070b';
-    ctxFreq.fillRect(0, 0, wF, hF);
+    ctxFreq.fillStyle = '#04070b'; ctxFreq.fillRect(0, 0, wF, hF);
     
-    ctxFreq.strokeStyle = 'rgba(27, 58, 74, 0.4)';
-    ctxFreq.beginPath();
-    for(let i=1; i<4; i++) {
-      let y = i * hF / 4;
-      ctxFreq.moveTo(0, y); ctxFreq.lineTo(wF, y);
-    }
+    ctxFreq.strokeStyle = 'rgba(27, 58, 74, 0.4)'; ctxFreq.beginPath();
+    for(let i=1; i<4; i++) { let y = i * hF / 4; ctxFreq.moveTo(0, y); ctxFreq.lineTo(wF, y); }
     ctxFreq.stroke();
     
-    ctxFreq.fillStyle = '#6b8794';
-    ctxFreq.font = `${10*dpr}px 'JetBrains Mono'`;
+    ctxFreq.save();
+    ctxFreq.fillStyle = '#6b8794'; ctxFreq.font = `${10*dpr}px 'JetBrains Mono'`;
+    ctxFreq.textAlign = 'left';
     ctxFreq.fillText('FREQUENCY (ILLUSTRATIVE)', 10*dpr, hF - 10*dpr);
+    ctxFreq.restore();
     
-    ctxFreq.beginPath();
-    ctxFreq.strokeStyle = '#3fe0ff';
-    ctxFreq.lineWidth = 1.5 * dpr;
+    ctxFreq.beginPath(); ctxFreq.strokeStyle = '#3fe0ff'; ctxFreq.lineWidth = 1.5 * dpr;
     
     for (let i = 0; i < M/2; i++) {
       let avgP = (accumulations > 0) ? (accumulatedPower[i] / accumulations) : 0.001;
       let db = 10 * Math.log10(avgP + 1e-10); 
       let mappedY = hF - ((db - 15) / 30) * hF;
       let x = (i / (M/2)) * wF;
-      
-      if (i === 0) ctxFreq.moveTo(x, mappedY);
-      else ctxFreq.lineTo(x, mappedY);
+      if (i === 0) ctxFreq.moveTo(x, mappedY); else ctxFreq.lineTo(x, mappedY);
     }
     ctxFreq.stroke();
 
     if (accumulations === MAX_ACC) {
-      ctxFreq.fillStyle = '#ffb347';
-      ctxFreq.textAlign = 'center';
+      ctxFreq.save();
+      ctxFreq.fillStyle = '#ffb347'; ctxFreq.textAlign = 'center';
       
       const drawLabel = (bin, text, isPrimary = false) => {
         let x = (bin / (M/2)) * wF;
         let avgP = accumulatedPower[bin] / accumulations;
-        let db = 10 * Math.log10(avgP);
-        let y = hF - ((db - 15) / 30) * hF - 10*dpr; 
-        
+        let y = hF - ((10 * Math.log10(avgP) - 15) / 30) * hF - 10*dpr; 
         ctxFreq.fillText(text, x, y);
         if(isPrimary) {
            ctxFreq.font = `${8*dpr}px 'JetBrains Mono'`;
@@ -286,11 +297,9 @@
         }
       };
 
-      drawLabel(30, 'RESEARCH');
-      drawLabel(100, 'TEST TONE 393.216 MHz', true);
-      drawLabel(180, 'INSTRUMENT');
-      drawLabel(200, 'FIELD KIT');
-      drawLabel(231, 'OFF-DUTY');
+      labelLinks.forEach(l => drawLabel(l.bin, l.text));
+      drawLabel(102, 'TEST TONE 393.216 MHz', true);
+      ctxFreq.restore();
     }
   }
 
@@ -307,67 +316,67 @@
     }
   }
 
-  // --- ACTION 1: SOFT CLEAR (For Replay & Spurs) ---
   function softClear() {
     const wasFinished = (accumulations >= MAX_ACC);
     accumulatedPower.fill(0);
     signalBuffer.fill(0);
     accumulations = 0;
+    framesProcessed = 0;
     activeNode = -1;
     document.getElementById('btn-reset-loop').style.display = 'none';
     
-    if (wasFinished && isAnimating) {
-      tick(); 
-    } else if (!isAnimating) {
-      isAnimating = true;
-      tick();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      while(accumulations < MAX_ACC) { processFrame(); }
+      draw();
+      document.getElementById('btn-reset-loop').style.display = 'inline-block';
+    } else {
+      if (wasFinished && isAnimating) tick(); 
+      else if (!isAnimating) { isAnimating = true; tick(); }
     }
   }
 
-  // --- ACTION 2: HARD RESET (For Reset Loop) ---
   function hardReset() {
-    softClear(); // Wipes the data
-    
-    // Add the dramatic hardware flash and loop increment
+    softClear(); 
     loopCount++;
     const lc = document.getElementById('loop-counter');
-    lc.textContent = `LOOP 000${loopCount}`.slice(-9);
+    lc.textContent = `LOOP ${String(loopCount).padStart(4, '0')}`;
     lc.style.display = 'inline';
     
-    let flash = document.createElement('div');
-    flash.className = 'flash-overlay flash-anim';
-    document.body.appendChild(flash);
-    setTimeout(() => flash.remove(), 600);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      let flash = document.createElement('div');
+      flash.className = 'flash-overlay flash-anim';
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 600);
+    }
   }
 
   window.addEventListener('triggerResetLoop', hardReset);
 
+  document.addEventListener('visibilitychange', () => {
+    isAnimating = !document.hidden;
+    if (isAnimating && accumulations < MAX_ACC) tick();
+  });
+
   const observer = new IntersectionObserver((entries) => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     entries.forEach(entry => {
-      isAnimating = entry.isIntersecting;
+      isAnimating = entry.isIntersecting && !document.hidden;
       if (isAnimating && accumulations < MAX_ACC) tick();
     });
   }, { threshold: 0.1 });
   observer.observe(document.getElementById('sec-01'));
-
-  // --- BIND BUTTONS TO SPECIFIC ACTIONS ---
   
-  // 1. Show Spurs Button
   document.getElementById('btn-spurs').addEventListener('click', (e) => {
     showSpurs = !showSpurs;
     e.target.textContent = showSpurs ? 'HIDE CLOCK SPURS' : 'SHOW CLOCK SPURS';
-    // Soft clear so you can actually see the spurs form if it was already finished
     if (accumulations === MAX_ACC) softClear();
   });
-  
-  // 2. Replay Button
   document.getElementById('btn-replay').addEventListener('click', softClear);
-  
-  // 3. Reset Loop Button
   document.getElementById('btn-reset-loop').addEventListener('click', hardReset);
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    processFrame(); draw();
+    while(accumulations < MAX_ACC) { processFrame(); }
+    draw();
+    document.getElementById('btn-reset-loop').style.display = 'inline-block';
   }
 })();
