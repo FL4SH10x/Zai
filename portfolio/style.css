@@ -21,8 +21,8 @@ body {
   line-height: 1.6;
   overflow-x: hidden;
   background-image: 
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    linear-gradient(rgba(27, 58, 74, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(27, 58, 74, 0.35) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: center center;
 }
@@ -334,3 +334,53 @@ body.theme-amber {
   0% { border-color: var(--amber); box-shadow: 0 0 20px rgba(255, 179, 71, 0.3); background: rgba(255, 179, 71, 0.05); }
   100% { border-color: var(--line); box-shadow: none; background: var(--panel); }
 }
+
+/* --- NEW FIXES (STAGE 1) --- */
+
+/* Accessibility focus & skip link */
+*:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+.skip-link {
+  position: absolute; top: -50px; left: 0;
+  background: var(--cyan); color: var(--bg);
+  padding: 8px 16px; z-index: 9999;
+  font-family: 'JetBrains Mono', monospace; font-weight: bold;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 0; }
+
+/* Mobile Menu Scroll */
+.top-center {
+  display: flex; gap: 1.5rem;
+  overflow-x: auto; white-space: nowrap;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.top-center::-webkit-scrollbar { display: none; }
+
+/* Readout Dots (replaces literal dots) */
+.leader {
+  flex-grow: 1;
+  border-bottom: 1px dashed rgba(27, 58, 74, 0.5);
+  margin: 0 10px;
+  position: relative;
+  top: -6px;
+}
+
+/* Base text sizing fix */
+.mono.dim, .log-card { font-size: 14px; }
+.btk-tally { font-size: 13px; }
+
+/* Missing Classes Definitions */
+.sweep-heading { border-bottom: 2px solid var(--line); display: inline-block; padding-right: 1.5rem; }
+.photo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.photo-frame { border: 1px solid var(--line); padding: 5px; background: rgba(0,0,0,0.3); text-align: center; }
+.results-strip { display: flex; flex-direction: column; gap: 5px; background: rgba(0,0,0,0.3); padding: 1rem; border: 1px solid var(--line); margin: 1rem 0; }
+.hint { font-size: 0.75rem; color: var(--dim); font-style: italic; }
+.sub-line { color: var(--cyan); margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; }
+.research-header { margin-bottom: 1rem; border-bottom: 1px dashed var(--line); padding-bottom: 0.5rem; }
+.research-panel { margin-top: 2rem; }
+.btk-actions { margin: 1rem 0; }
+.full-viewport { min-height: 90vh; }

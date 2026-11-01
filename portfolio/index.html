@@ -15,9 +15,12 @@
   <meta property="og:url" content="https://[TODO: USERNAME].github.io/">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="canonical" href="https://[TODO: USERNAME].github.io/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚛️</text></svg>">
+  <meta name="theme-color" content="#04070b">
 </head>
 <body>
-  <div id="boot-sequence" class="boot-sequence">
+  <a href="#main-content" class="skip-link">Skip to content</a>
+  <div id="boot-sequence" class="boot-sequence" style="display: none;">
     <div class="boot-text mono">
       <div id="boot-1"></div>
       <div id="boot-2"></div>
@@ -53,11 +56,11 @@
         <span class="tag">SEC-01 // SIGNAL</span>
         <h1>JAI PARASHAR</h1>
         <p class="sub-line">BS-MS Physics, IISER Tirupati</p>
-        <p>Theory–experiment interface of condensed matter and quantum physics, with a focus on quantum materials and devices.</p>
+        <p>I work on the theory–experiment interface of quantum transport and instrumentation: Andreev reflection at N–S junctions (IIT BHU) and FPGA spectrometer bring-up for radio astronomy (TIFR).</p>
         <div class="readout-group">
-          <div class="readout"><span>LOCATION</span><span>........ TIRUPATI, INDIA</span></div>
-          <div class="readout"><span>FOCUS</span><span>........... QUANTUM TRANSPORT // INSTRUMENTATION</span></div>
-          <div class="readout"><span>STATUS</span><span>.......... <span class="highlight">[TODO: OPEN TO RESEARCH POSITIONS]</span></span></div>
+          <div class="readout"><span>LOCATION</span><span class="leader"></span><span>TIRUPATI, INDIA</span></div>
+          <div class="readout"><span>FOCUS</span><span class="leader"></span><span>QUANTUM TRANSPORT // INSTRUMENTATION</span></div>
+          <div class="readout"><span>STATUS</span><span class="leader"></span><span><span class="highlight">[TODO: OPEN TO RESEARCH POSITIONS]</span></span></div>
         </div>
         <div class="actions">
           <a href="#sec-02" class="btn">VIEW RESEARCH</a>
@@ -102,8 +105,8 @@
           <h3>RADIO ASTRONOMY INSTRUMENTATION</h3>
           <p class="mono dim">TIFR Mumbai | Dr. Bhaswati Mookerjea | May–Jul 2026</p>
         </div>
-        <p>Studied digital spectrometer theory and built a PFB + FFT spectrometer on an AMD-Xilinx RFSoC4x2 using the CASPER/Simulink toolflow for the BVEX balloon-borne VLBI telescope. Wrote Python scripts to generate a test tone; a DAC–ADC loopback successfully recovered the signal as the dominant peak, validating the entire digital processing pipeline.</p>
-        
+        <p>Self-guided project in radio-astronomy instrumentation. Studied digital-spectrometer theory (sampling, FFT, polyphase filterbanks, vector accumulation) and the RFSoC-based backend design of the BVEX balloon-borne VLBI telescope. Built and tested a PFB + FFT spectrometer on an AMD-Xilinx RFSoC4x2 with the CASPER/Simulink toolflow, adapted from the CASPER tutorial design, and edited the Python scripts that generate the test tone and read out the spectrum.</p>
+        <p style="margin-top: 1rem;">A DAC&rarr;ADC loopback recovered the test tone as the dominant spectral peak, showing the chain works end to end for a single tone. Linearity, dynamic range and channel response were not characterised.</p>
         <div class="results-strip">
           <div class="readout"><span>TEST TONE</span><span>393.216 MHz</span></div>
           <div class="readout"><span>SCOPE READING</span><span>&approx;393.95 MHz</span></div>
@@ -112,12 +115,12 @@
         </div>
         
         <details class="loop-log">
-          <summary class="mono">LOOP LOG: Issues documented during bring-up &darr;</summary>
-          <div class="log-card"><span class="log-counter">&#10227; LOOP 01</span> Both ADC/DAC tile blocks must be enabled, even if only one is used.</div>
-          <div class="log-card"><span class="log-counter">&#10227; LOOP 02</span> DAC blocks expect Xilinx-type inputs; ADC blocks expect Simulink-type inputs.</div>
-          <div class="log-card"><span class="log-counter">&#10227; LOOP 03</span> Never leave RFDC ports unconnected.</div>
-          <div class="log-card"><span class="log-counter">&#10227; LOOP 04</span> Board clock leakage caused spurs at 245.76 MHz spacing.</div>
-          <div class="log-card stable"><span class="log-counter">LOOP N: STABLE</span></div>
+          <summary class="mono">Issues documented during bring-up &darr;</summary>
+          <div class="log-card"><span class="log-counter">ISSUE</span> Design misbehaved when one channel of an RFDC tile was disabled.<br><span class="dim">CAUSE: Tiles configure ADC/DAC channels in pairs. FIX: Enable both channels of the tile even if one is unused.</span></div>
+          <div class="log-card"><span class="log-counter">ISSUE</span> Type-mismatch errors at compile time.<br><span class="dim">CAUSE: DAC inputs expect Xilinx-type signals; ADC outputs are Simulink-type. FIX: Keep Xilinx-type signals on the DAC side and Simulink-type signals on the ADC side.</span></div>
+          <div class="log-card"><span class="log-counter">ISSUE</span> Compile errors or unpredictable behaviour on the board.<br><span class="dim">CAUSE: Unconnected RFDC ports. FIX: Tie unused ADC/DAC ports to constant 0.</span></div>
+          <div class="log-card"><span class="log-counter">ISSUE</span> Spurs at 245.76 MHz spacing.<br><span class="dim">STATUS: Attributed to board clock leakage; not isolated by a test.</span></div>
+          <div class="log-card stable"><span class="log-counter">RESULT</span> Single-tone loopback recovered as the dominant peak.</div>
         </details>
         
         <div class="figure-grid">
@@ -146,12 +149,12 @@
           <h3>QUANTUM TRANSPORT AT N-S JUNCTIONS</h3>
           <p class="mono dim">IIT (BHU) Varanasi | Dr. Panch Ram | May–Jul 2025</p>
         </div>
-        <p>Computed Andreev reflection and electron/hole transmission probabilities across a superconducting gap using the analytical BTK expressions in Python. Solved the Bogoliubov–de Gennes (BdG) equations numerically via wavefunction matching, accurately reproducing the BTK energy dependence and confirming strict probability conservation.</p>
+        <p>Computed Andreev reflection and electron/hole transmission probabilities across a superconducting gap using the analytical BTK expressions in Python. Solved the Bogoliubov–de Gennes (BdG) equations numerically via wavefunction matching. Reproduced the standard BTK result for a transparent interface (Z = 0) with two independent methods.</p>
         
         <div class="results-strip">
           <div class="readout"><span>REPORT</span><span>21 PAGES</span></div>
           <div class="readout"><span>METHODS</span><span>2 (ANALYTIC BTK, NUMERICAL BdG)</span></div>
-          <div class="readout"><span>CHECK</span><span>A+B+C+D = 1</span></div>
+          <div class="readout"><span>CHECK</span><span>MAX |&Sigma;&minus;1| = [measured value from Section 5.2]</span></div>
         </div>
         
         <div class="figure-grid grid-halves">
@@ -259,9 +262,9 @@
         </div>
       </div>
       <div class="panel" style="margin-top: 1.5rem;">
-        <div class="readout"><span>COURSEWORK</span><span>QUANTUM MECHANICS I/II, STATISTICAL MECHANICS I/II, ELECTRODYNAMICS I, OPTICS, CONDENSED MATTER, ATOMIC/MOLECULAR, COMPUTATIONAL, ML, PHOTONICS/NONLINEAR</span></div>
-        <div class="readout"><span>MATH & CHEM</span><span>CALCULUS, LINEAR ALGEBRA, PROBABILITY, REAL ANALYSIS, SOLID STATE CHEMISTRY</span></div>
-        <div class="readout"><span>CERT & LANG</span><span>ROCKET PROPULSION (ISRO) | HINDI (NATIVE), ENGLISH (ADV), GERMAN (A1)</span></div>
+        <div class="readout"><span>COURSEWORK</span><span>Quantum mechanics I/II, statistical mechanics I/II, electrodynamics I, optics, condensed matter, atomic/molecular, computational, ML, photonics/nonlinear</span></div>
+        <div class="readout"><span>MATH & CHEM</span><span>Calculus, linear algebra, probability, real analysis, solid state chemistry</span></div>
+        <div class="readout"><span>CERT & LANG</span><span>Rocket propulsion (ISRO) | Hindi (native), English (adv), German (A1)</span></div>
         <div class="readout" style="margin-top: 1rem; color: var(--cyan);"><span>EDUCATION</span><span>BS-MS PHYSICS (INTEGRATED), IISER TIRUPATI, 2023–PRESENT</span></div>
       </div>
     </section>
@@ -294,9 +297,9 @@
       </div>
       <div class="panel" style="margin-top: 1.5rem;">
         <span class="tag">OUTREACH & LEADERSHIP</span>
-        <div class="readout"><span>SCIENCE DAY 25</span><span>DEMONSTRATED CHEMILUMINESCENCE & HALL EFFECT</span></div>
-        <div class="readout"><span>UNMOCHAN</span><span>TAUGHT SCIENCE & MATH TO UNDERPRIVILEGED CHILDREN</span></div>
-        <div class="readout"><span>VIVANTE 2026</span><span>FESTIVAL COORDINATOR & WEB DEVELOPER (VIVANTE26.IN)</span></div>
+        <div class="readout"><span>SCIENCE DAY 25</span><span>Demonstrated chemiluminescence & Hall effect.</span></div>
+        <div class="readout"><span>UNMOCHAN</span><span>Taught science & math to underprivileged children.</span></div>
+        <div class="readout"><span>VIVANTE 2026</span><span>Coordinator, Vivante 2026; built the festival website (vivante26.in) with AI-assisted tools.</span></div>
       </div>
     </section>
 
