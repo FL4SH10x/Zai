@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jai Parashar | Physics, quantum transport and radio-astronomy instrumentation</title>
+  <meta name="description" content="Theory–experiment interface of condensed matter and quantum physics, with a focus on quantum materials and devices.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <meta property="og:title" content="Jai Parashar | Physics, quantum transport and radio-astronomy instrumentation">
+  <meta property="og:description" content="Theory–experiment interface of condensed matter and quantum physics, with a focus on quantum materials and devices.">
+  <meta property="og:image" content="https://[TODO: USERNAME].github.io/assets/og.png">
+  <meta property="og:url" content="https://[TODO: USERNAME].github.io/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://[TODO: USERNAME].github.io/">
+</head>
+<body>
+  <div id="boot-sequence" class="boot-sequence">
+    <div class="boot-text mono">
+      <div id="boot-1"></div>
+      <div id="boot-2"></div>
+      <div id="boot-3"></div>
+      <div id="boot-4"></div>
+      <div id="boot-5"></div>
+    </div>
+  </div>
+
+  <div class="scanlines"></div>
+
+  <header class="top-bar">
+    <div class="top-left">J. PARASHAR // PHYSICS</div>
+    <nav class="top-center">
+      <a href="#sec-01" class="nav-link">01 SIGNAL</a>
+      <a href="#sec-02" class="nav-link">02 RESEARCH</a>
+      <a href="#sec-03" class="nav-link">03 INSTRUMENT</a>
+      <a href="#sec-04" class="nav-link">04 FIELD KIT</a>
+      <a href="#sec-05" class="nav-link">05 OFF-DUTY</a>
+      <a href="#sec-06" class="nav-link">06 COMMS</a>
+    </nav>
+    <div class="top-right">
+      <span id="loop-counter" class="mono highlight" style="display: none; margin-right: 15px;">LOOP 0000</span>
+      <span id="local-time" class="mono">00:00:00</span>
+      <button id="btn-cmd" class="btn btn-alt" style="padding: 2px 6px; font-size: 0.7rem; margin-left: 10px;">CMD</button>
+      <a href="assets/Jai_Parashar_CV.pdf" class="btn-text" style="margin-left: 10px;" target="_blank">CV &darr;</a>
+    </div>
+  </header>
+
+  <main>
+    <section id="sec-01" class="full-viewport">
+      <div class="hero-panel panel">
+        <span class="tag">SEC-01 // SIGNAL</span>
+        <h1>JAI PARASHAR</h1>
+        <p class="sub-line">BS-MS Physics, IISER Tirupati</p>
+        <p>Theory–experiment interface of condensed matter and quantum physics, with a focus on quantum materials and devices.</p>
+        <div class="readout-group">
+          <div class="readout"><span>LOCATION</span><span>........ TIRUPATI, INDIA</span></div>
+          <div class="readout"><span>FOCUS</span><span>........... QUANTUM TRANSPORT // INSTRUMENTATION</span></div>
+          <div class="readout"><span>STATUS</span><span>.......... <span class="highlight">[TODO: OPEN TO RESEARCH POSITIONS]</span></span></div>
+        </div>
+        <div class="actions">
+          <a href="#sec-02" class="btn">VIEW RESEARCH</a>
+          <a href="assets/Jai_Parashar_CV.pdf" class="btn btn-alt" target="_blank">DOWNLOAD CV (PDF)</a>
+        </div>
+        <div class="hint" style="margin-top: 15px;">PRESS ` FOR COMMAND LINE</div>
+      </div>
+
+      <div class="hero-bg" id="spectrometer-container">
+        <div class="spectrometer-ui">
+          <canvas id="canvas-time"></canvas>
+          <div class="node-chain mono dim">
+            <span id="node-0">RFDC</span> &rarr; 
+            <span id="node-1">MUNGE</span> &rarr; 
+            <span id="node-2">PFB</span> &rarr; 
+            <span id="node-3">FFT</span> &rarr; 
+            <span id="node-4">POWER</span> &rarr; 
+            <span id="node-5">ACCUMULATE</span>
+          </div>
+          <canvas id="canvas-freq"></canvas>
+          <div class="spectrometer-controls mono">
+            <div class="readouts-inline">
+              <span id="spec-accum">ACCUMULATIONS: 0 / 64</span> | 
+              <span id="spec-snr">SNR &approx; -- dB</span>
+            </div>
+            <div class="spec-buttons">
+              <button id="btn-spurs" class="btn btn-alt" style="padding: 4px 8px; font-size: 0.75rem;">SHOW CLOCK SPURS</button>
+              <button id="btn-replay" class="btn" style="padding: 4px 8px; font-size: 0.75rem;">REPLAY</button>
+              <button id="btn-reset-loop" class="btn" style="padding: 4px 8px; font-size: 0.75rem; display: none;">RESET LOOP</button>
+            </div>
+          </div>
+          <p class="mono dim" style="font-size: 0.7rem; text-align: right; margin-top: 5px;">Schematic simulation of a PFB + FFT spectrometer. Not measured data.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-02">
+      <h2 class="sweep-heading">SEC-02 // RESEARCH</h2>
+      <div class="panel research-panel">
+        <span class="tag">02-A // RADIO ASTRONOMY</span>
+        <div class="research-header">
+          <h3>RADIO ASTRONOMY INSTRUMENTATION</h3>
+          <p class="mono dim">TIFR Mumbai | Dr. Bhaswati Mookerjea | May–Jul 2026</p>
+        </div>
+        <p>Studied digital spectrometer theory and built a PFB + FFT spectrometer on an AMD-Xilinx RFSoC4x2 using the CASPER/Simulink toolflow for the BVEX balloon-borne VLBI telescope. Wrote Python scripts to generate a test tone; a DAC–ADC loopback successfully recovered the signal as the dominant peak, validating the entire digital processing pipeline.</p>
+        
+        <div class="results-strip">
+          <div class="readout"><span>TEST TONE</span><span>393.216 MHz</span></div>
+          <div class="readout"><span>SCOPE READING</span><span>&approx;393.95 MHz</span></div>
+          <div class="readout"><span>SPUR SPACING</span><span>245.76 MHz</span></div>
+          <div class="readout"><span>LOOPBACK</span><span>TONE = DOMINANT PEAK</span></div>
+        </div>
+        
+        <details class="loop-log">
+          <summary class="mono">LOOP LOG: Issues documented during bring-up &darr;</summary>
+          <div class="log-card"><span class="log-counter">&#10227; LOOP 01</span> Both ADC/DAC tile blocks must be enabled, even if only one is used.</div>
+          <div class="log-card"><span class="log-counter">&#10227; LOOP 02</span> DAC blocks expect Xilinx-type inputs; ADC blocks expect Simulink-type inputs.</div>
+          <div class="log-card"><span class="log-counter">&#10227; LOOP 03</span> Never leave RFDC ports unconnected.</div>
+          <div class="log-card"><span class="log-counter">&#10227; LOOP 04</span> Board clock leakage caused spurs at 245.76 MHz spacing.</div>
+          <div class="log-card stable"><span class="log-counter">LOOP N: STABLE</span></div>
+        </details>
+        
+        <div class="figure-grid">
+          <div class="figure-card">
+            <img src="assets/tifr-fig3.webp" alt="[TODO: Crop Fig 3 from TIFR PDF]" loading="lazy">
+            <p class="mono dim">Fig 3. Combined circuit: waveform generator (left) feeding the DAC, spectrometer (right) reading the ADC.</p>
+          </div>
+          <div class="figure-card">
+            <img src="assets/tifr-fig5.webp" alt="[TODO: Crop Fig 5 from TIFR PDF]" loading="lazy">
+            <p class="mono dim">Fig 5. Oscilloscope capture of DAC output matching the 393.216 MHz carrier.</p>
+          </div>
+          <div class="figure-card">
+            <img src="assets/tifr-fig6.webp" alt="[TODO: Crop Fig 6 from TIFR PDF]" loading="lazy">
+            <p class="mono dim">Fig 6. Final power spectrum readout showing the 400 MHz loopback peak.</p>
+          </div>
+        </div>
+        
+        <div class="actions">
+          <a href="assets/reports/TIFR_26.pdf" class="btn btn-alt" target="_blank">DOWNLOAD REPORT (PDF)</a>
+        </div>
+      </div>
+
+      <div class="panel research-panel">
+        <span class="tag">02-B // QUANTUM TRANSPORT</span>
+        <div class="research-header">
+          <h3>QUANTUM TRANSPORT AT N-S JUNCTIONS</h3>
+          <p class="mono dim">IIT (BHU) Varanasi | Dr. Panch Ram | May–Jul 2025</p>
+        </div>
+        <p>Computed Andreev reflection and electron/hole transmission probabilities across a superconducting gap using the analytical BTK expressions in Python. Solved the Bogoliubov–de Gennes (BdG) equations numerically via wavefunction matching, accurately reproducing the BTK energy dependence and confirming strict probability conservation.</p>
+        
+        <div class="results-strip">
+          <div class="readout"><span>REPORT</span><span>21 PAGES</span></div>
+          <div class="readout"><span>METHODS</span><span>2 (ANALYTIC BTK, NUMERICAL BdG)</span></div>
+          <div class="readout"><span>CHECK</span><span>A+B+C+D = 1</span></div>
+        </div>
+        
+        <div class="figure-grid grid-halves">
+          <div class="figure-card">
+            <img src="assets/iitbhu-fig1.webp" alt="[TODO: Crop Fig 1 from BHU PDF]" loading="lazy">
+            <p class="mono dim">Fig 1. Reflection and transmission coefficients vs energy (BTK Analytical).</p>
+          </div>
+          <div class="figure-card">
+            <img src="assets/iitbhu-fig2.webp" alt="[TODO: Crop Fig 2 from BHU PDF]" loading="lazy">
+            <p class="mono dim">Fig 2. Reflection and transmission coefficients vs energy (BdG Numerical).</p>
+          </div>
+        </div>
+        
+        <div class="actions">
+          <a href="#sec-03" class="btn">TRY IT YOURSELF &darr;</a>
+          <a href="assets/reports/Internship_Report.pdf" class="btn btn-alt" target="_blank">DOWNLOAD REPORT (PDF)</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-03">
+      <h2 class="sweep-heading">SEC-03 // INSTRUMENT</h2>
+      <div class="panel">
+        <span class="tag">ANDREEV WIDGET</span>
+        <p class="mono dim" style="margin-bottom: 1.5rem;">Interactive version of the calculation from my IIT (BHU) project.</p>
+        
+        <div class="btk-ui">
+          <div class="btk-left">
+            <div class="btk-canvas-wrap">
+              <canvas id="btk-schematic"></canvas>
+            </div>
+            <div class="btk-actions">
+              <button id="btn-fire" class="btn" style="width: 100%;">FIRE ELECTRON</button>
+            </div>
+            <div class="btk-tally mono">
+              <div class="dim" style="border-bottom: 1px solid var(--line); padding-bottom: 4px; margin-bottom: 4px;">LAST 200 SHOTS vs EXACT</div>
+              <div class="tally-row"><span style="color:#ff5a3c">A (ANDREEV)</span><span id="tally-A">0.00 / 0.00</span></div>
+              <div class="tally-row"><span style="color:#3fe0ff">B (NORMAL)</span><span id="tally-B">0.00 / 0.00</span></div>
+              <div class="tally-row"><span style="color:#cfe8f2">C (TRANS e&minus;)</span><span id="tally-C">0.00 / 0.00</span></div>
+              <div class="tally-row"><span style="color:#ffb347">D (TRANS h+)</span><span id="tally-D">0.00 / 0.00</span></div>
+            </div>
+          </div>
+
+          <div class="btk-right">
+            <div class="btk-plots">
+              <canvas id="btk-plot-ab"></canvas>
+              <canvas id="btk-plot-g"></canvas>
+            </div>
+            
+            <div class="btk-controls mono">
+              <div class="slider-group">
+                <label for="btk-z">BARRIER STRENGTH (Z): <span id="val-z">0.00</span></label>
+                <input type="range" id="btk-z" min="0" max="5" step="0.05" value="0">
+              </div>
+              <div class="slider-group">
+                <label for="btk-e">ENERGY (E/&Delta;): <span id="val-e">0.50</span></label>
+                <input type="range" id="btk-e" min="0" max="3" step="0.01" value="0.5">
+              </div>
+              <div class="btk-readout">
+                <span>&Sigma; = <span id="val-sum">1.0000</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <details class="loop-log" style="margin-top: 1.5rem;">
+          <summary class="mono">HOW THIS WORKS &darr;</summary>
+          <div class="mono dim" style="margin-top: 1rem; font-size: 0.8rem;">
+            <p style="margin-bottom: 1rem; color: var(--text);">The Andreev conductance doubling at Z = 0 below the gap is the signature of a perfectly transparent N&ndash;S interface; increasing Z suppresses it and turns the gap region into a dip.</p>
+            <p><strong>For E < &Delta;:</strong> C = D = 0</p>
+            <p>A = &Delta;<sup>2</sup> / [E<sup>2</sup> + (&Delta;<sup>2</sup> &minus; E<sup>2</sup>)(1 + 2Z<sup>2</sup>)<sup>2</sup>], B = 1 &minus; A</p>
+            <p style="margin-top: 0.5rem;"><strong>For E > &Delta;:</strong></p>
+            <p>u<sub>0</sub><sup>2</sup> = 0.5 &times; [1 + &radic;(E<sup>2</sup> &minus; &Delta;<sup>2</sup>)/E], v<sub>0</sub><sup>2</sup> = 1 &minus; u<sub>0</sub><sup>2</sup></p>
+            <p>&gamma;<sup>2</sup> = [u<sub>0</sub><sup>2</sup> + Z<sup>2</sup>(u<sub>0</sub><sup>2</sup> &minus; v<sub>0</sub><sup>2</sup>)]<sup>2</sup></p>
+            <p>A = u<sub>0</sub><sup>2</sup>v<sub>0</sub><sup>2</sup> / &gamma;<sup>2</sup>, B = (u<sub>0</sub><sup>2</sup> &minus; v<sub>0</sub><sup>2</sup>)<sup>2</sup>Z<sup>2</sup>(1 + Z<sup>2</sup>) / &gamma;<sup>2</sup></p>
+            <p>C = u<sub>0</sub><sup>2</sup>(u<sub>0</sub><sup>2</sup> &minus; v<sub>0</sub><sup>2</sup>)(1 + Z<sup>2</sup>) / &gamma;<sup>2</sup>, D = v<sub>0</sub><sup>2</sup>(u<sub>0</sub><sup>2</sup> &minus; v<sub>0</sub><sup>2</sup>)Z<sup>2</sup> / &gamma;<sup>2</sup></p>
+            <p style="margin-top: 0.5rem;"><strong>Conductance:</strong> G<sub>NS</sub> / G<sub>NN</sub> = (1 + A &minus; B)(1 + Z<sup>2</sup>)</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="sec-04">
+      <h2 class="sweep-heading">SEC-04 // FIELD KIT</h2>
+      <div class="grid-2">
+        <div class="panel">
+          <span class="tag">PROGRAMMING</span>
+          <div class="readout"><span>LANG</span><span>PYTHON</span></div>
+          <div class="readout"><span>LIBS</span><span>NUMPY, SCIPY, SYMPY, MATPLOTLIB, PANDAS</span></div>
+        </div>
+        <div class="panel">
+          <span class="tag">HARDWARE & FPGA</span>
+          <div class="readout"><span>TOOLS</span><span>CASPER/SIMULINK, AMD VIVADO, CASPERFPGA</span></div>
+          <div class="readout"><span>HW</span><span>RFSOC4X2 BRING-UP, OSCILLOSCOPES, MULTIMETERS</span></div>
+        </div>
+        <div class="panel">
+          <span class="tag">SCIENTIFIC</span>
+          <div class="readout"><span>MATH</span><span>MATHEMATICA, MATLAB/SIMULINK</span></div>
+          <div class="readout"><span>DOCS</span><span>LATEX</span></div>
+        </div>
+        <div class="panel">
+          <span class="tag">EXPERIMENTAL</span>
+          <div class="readout"><span>SKILLS</span><span>SIGNAL MEASUREMENT, ERROR ESTIMATION</span></div>
+          <div class="readout"><span>DATA</span><span>ANALYSIS & VISUALISATION</span></div>
+        </div>
+      </div>
+      <div class="panel" style="margin-top: 1.5rem;">
+        <div class="readout"><span>COURSEWORK</span><span>QUANTUM MECHANICS I/II, STATISTICAL MECHANICS I/II, ELECTRODYNAMICS I, OPTICS, CONDENSED MATTER, ATOMIC/MOLECULAR, COMPUTATIONAL, ML, PHOTONICS/NONLINEAR</span></div>
+        <div class="readout"><span>MATH & CHEM</span><span>CALCULUS, LINEAR ALGEBRA, PROBABILITY, REAL ANALYSIS, SOLID STATE CHEMISTRY</span></div>
+        <div class="readout"><span>CERT & LANG</span><span>ROCKET PROPULSION (ISRO) | HINDI (NATIVE), ENGLISH (ADV), GERMAN (A1)</span></div>
+        <div class="readout" style="margin-top: 1rem; color: var(--cyan);"><span>EDUCATION</span><span>BS-MS PHYSICS (INTEGRATED), IISER TIRUPATI, 2023–PRESENT</span></div>
+      </div>
+    </section>
+
+    <section id="sec-05">
+      <h2 class="sweep-heading">SEC-05 // OFF-DUTY</h2>
+      <div class="panel">
+        <span class="tag">PHOTOGRAPHY</span>
+        <div class="photo-grid">
+          <div class="photo-frame lightbox-trigger" data-src="assets/photo1.webp" data-caption="LOC // [TODO], DATE // [TODO]">
+            <span class="mono dim">[TODO: PHOTO 1]</span>
+          </div>
+          <div class="photo-frame lightbox-trigger" data-src="assets/photo2.webp" data-caption="LOC // [TODO], DATE // [TODO]">
+            <span class="mono dim">[TODO: PHOTO 2]</span>
+          </div>
+          <div class="photo-frame lightbox-trigger" data-src="assets/photo3.webp" data-caption="LOC // [TODO], DATE // [TODO]">
+            <span class="mono dim">[TODO: PHOTO 3]</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top: 1.5rem;">
+        <div class="panel">
+          <span class="tag">ACTING & CONTENT</span>
+          <a href="[TODO: URL]" class="btn btn-alt" target="_blank" rel="noopener">VIEW CHANNELS &#8599;</a>
+        </div>
+        <div class="panel">
+          <span class="tag">ATHLETICS</span>
+          <p class="mono">Outside hitter (volleyball) & 100m/200m sprinter. IISM 2025 (Bronze). Regional KVS Meets 2017-2020 (Multiple Gold/Bronze).</p>
+        </div>
+      </div>
+      <div class="panel" style="margin-top: 1.5rem;">
+        <span class="tag">OUTREACH & LEADERSHIP</span>
+        <div class="readout"><span>SCIENCE DAY 25</span><span>DEMONSTRATED CHEMILUMINESCENCE & HALL EFFECT</span></div>
+        <div class="readout"><span>UNMOCHAN</span><span>TAUGHT SCIENCE & MATH TO UNDERPRIVILEGED CHILDREN</span></div>
+        <div class="readout"><span>VIVANTE 2026</span><span>FESTIVAL COORDINATOR & WEB DEVELOPER (VIVANTE26.IN)</span></div>
+      </div>
+    </section>
+
+    <section id="sec-06">
+      <h2 class="sweep-heading">SEC-06 // COMMS</h2>
+      <div class="panel">
+        <span class="tag">CONNECTION ESTABLISHED</span>
+        <p class="mono" style="margin-bottom: 1.5rem;">STATUS: <span class="highlight">OPEN TO [TODO: SUMMER RESEARCH / PHD]</span></p>
+        <div class="readout"><span>EMAIL</span><span><a href="mailto:jai_20231077@students.iisertirupati.ac.in" class="cyan-link">jai_20231077@students.iisertirupati.ac.in</a></span></div>
+        <div class="readout"><span>GITHUB</span><span><a href="[TODO: GitHub URL]" class="cyan-link" target="_blank" rel="noopener">[TODO: GITHUB USERNAME]</a></span></div>
+        <div class="readout"><span>LINKEDIN</span><span><a href="[TODO: LinkedIn URL]" class="cyan-link" target="_blank" rel="noopener">[TODO: LINKEDIN USERNAME]</a></span></div>
+        <div style="margin-top: 2rem;">
+          <a href="assets/Jai_Parashar_CV.pdf" class="btn" target="_blank">DOWNLOAD CV (PDF)</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p class="mono">LAST UPDATED: NOVEMBER 2026</p>
+    <p class="mono dim" style="font-size: 0.8rem; margin-top: 0.5rem;">Built with plain HTML, CSS and JavaScript.</p>
+  </footer>
+
+  <script src="main.js"></script>
+  <script src="spectrum.js"></script>
+  <script src="btk.js"></script>
+
+  <div id="lightbox" class="lightbox hidden">
+    <button id="lb-close" class="lb-btn lb-close" aria-label="Close">&times;</button>
+    <button id="lb-prev" class="lb-btn lb-prev" aria-label="Previous">&larr;</button>
+    <div class="lb-content">
+      <img id="lb-img" src="" alt="Off-duty photography">
+      <div id="lb-caption" class="mono dim"></div>
+    </div>
+    <button id="lb-next" class="lb-btn lb-next" aria-label="Next">&rarr;</button>
+  </div>
+
+  <div id="terminal" class="terminal-panel hidden">
+    <div class="terminal-header mono dim">
+      <span>SYS.TERMINAL // PRESS ESC TO CLOSE</span>
+    </div>
+    <div id="terminal-output" class="terminal-output mono"></div>
+    <div class="terminal-input-row mono">
+      <span style="color: var(--amber); margin-right: 8px;">jai@iiser:~$</span>
+      <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" aria-label="Command line input">
+    </div>
+  </div>
+</body>
+</html>
