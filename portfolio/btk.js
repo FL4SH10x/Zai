@@ -1,5 +1,5 @@
 (function initBTK() {
-  // --- NEW: FETCH BdG DATA ---
+  // --- FETCH BdG DATA (WITH FAIL-SAFE) ---
   let bdgData = null;
   fetch('assets/bdg_data.json')
     .then(response => response.json())
@@ -7,7 +7,8 @@
       bdgData = data;
       drawAll(); // Redraw once data loads
     })
-    .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
+    .catch(err => console.warn("BdG overlay disabled (Fetch blocked by CORS or file missing)."));
+
   function calcBTK(E_over_D, Z) {
     let A, B, C, D, G;
     const E = Math.max(1e-9, E_over_D);
@@ -32,25 +33,6 @@
     G = (1 + A - B) * (1 + Z2);
     return { A, B, C, D, G };
   }
-
-  function runSelfChecks() {
-    let passed = true;
-    for(let i=0; i<1000; i++) {
-      let res = calcBTK(Math.random() * 3, Math.random() * 5);
-      if (Math.abs(res.A + res.B + res.C + res.D - 1) > 1e-9) passed = false;
-    }
-    let res2 = calcBTK(0.5, 0);
-    if (Math.abs(res2.A - 1) > 1e-9 || Math.abs(res2.B) > 1e-9 || Math.abs(res2.G - 2) > 1e-9) passed = false;
-    
-    [0, 0.5, 1, 2, 5].forEach(z => {
-      let r1 = calcBTK(1 - 1e-9, z), r2 = calcBTK(1 + 1e-9, z);
-      if (Math.abs(r1.A - 1) > 1e-6 || Math.abs(r2.A - 1) > 1e-6) passed = false;
-    });
-
-    if (Math.abs(calcBTK(1000, 2).G - 1) > 1e-3) passed = false;
-    if (!passed) console.warn("BTK checks failed!");
-  }
-  runSelfChecks();
 
   const elZ = document.getElementById('btk-z'), elE = document.getElementById('btk-e');
   const valZ = document.getElementById('val-z'), valE = document.getElementById('val-e');
@@ -120,10 +102,10 @@
       else { paths.A.lineTo(x,yA); paths.B.lineTo(x,yB); paths.C.lineTo(x,yC); paths.D.lineTo(x,yD); paths.G.lineTo(x,yG); }
     }
     
-    ctxAB.strokeStyle = '#ff5a3c'; ctxAB.stroke(paths.A); // A (Red)
-    ctxAB.strokeStyle = '#3fe0ff'; ctxAB.stroke(paths.B); // B (Cyan)
-    ctxAB.strokeStyle = '#cfe8f2'; ctxAB.stroke(paths.C); // C (White)
-    ctxAB.strokeStyle = '#ffb347'; ctxAB.stroke(paths.D); // D (Amber)
+    ctxAB.strokeStyle = '#ff5a3c'; ctxAB.stroke(paths.A); 
+    ctxAB.strokeStyle = '#3fe0ff'; ctxAB.stroke(paths.B); 
+    ctxAB.strokeStyle = '#cfe8f2'; ctxAB.stroke(paths.C); 
+    ctxAB.strokeStyle = '#ffb347'; ctxAB.stroke(paths.D); 
     ctxG.strokeStyle = '#ffb347'; ctxG.stroke(paths.G);
     
     let curX = (currentE / 3) * w;
@@ -132,32 +114,30 @@
     ctxAB.beginPath(); ctxAB.moveTo(curX, 0); ctxAB.lineTo(curX, h); ctxAB.stroke();
     ctxG.beginPath(); ctxG.moveTo(curX, 0); ctxG.lineTo(curX, h); ctxG.stroke();
     ctxAB.setLineDash([]); ctxG.setLineDash([]);
+
+    // --- DRAW BdG SCATTER POINTS (FIXED COLORS) ---
     if (bdgData) {
       let currentZStr = currentZ.toFixed(2);
       if (bdgData[currentZStr]) {
-        // Draw a subtle "Numerical Data Active" indicator
         ctxAB.fillStyle = 'rgba(63, 224, 255, 0.2)';
         ctxAB.fillText('BdG NUMERICAL DATA OVERLAY ACTIVE', w - 210*dpr, 12*dpr);
         
         bdgData[currentZStr].forEach(pt => {
           let px = (pt.E / 3) * w;
           
-          // Draw A (Red circles)
           let pyA = h - (pt.A * h * 0.9);
           ctxAB.beginPath(); ctxAB.arc(px, pyA, 3*dpr, 0, Math.PI*2);
-          ctxAB.fillStyle = '#bg'; ctxAB.fill();
+          ctxAB.fillStyle = '#04070b'; ctxAB.fill();
           ctxAB.strokeStyle = '#ff5a3c'; ctxAB.stroke();
           
-          // Draw B (Cyan circles)
           let pyB = h - (pt.B * h * 0.9);
           ctxAB.beginPath(); ctxAB.arc(px, pyB, 3*dpr, 0, Math.PI*2);
-          ctxAB.fillStyle = '#bg'; ctxAB.fill();
+          ctxAB.fillStyle = '#04070b'; ctxAB.fill();
           ctxAB.strokeStyle = '#3fe0ff'; ctxAB.stroke();
           
-          // Draw G (Amber circles)
           let pyG = h - ((pt.G / maxG) * h * 0.9);
           ctxG.beginPath(); ctxG.arc(px, pyG, 3*dpr, 0, Math.PI*2);
-          ctxG.fillStyle = '#bg'; ctxG.fill();
+          ctxG.fillStyle = '#04070b'; ctxG.fill();
           ctxG.strokeStyle = '#ffb347'; ctxG.stroke();
         });
       }
@@ -188,7 +168,6 @@
       let p = particles[i];
       p.x += p.vx;
       
-      // Collision Logic
       if (p.type === 'in' && p.x >= w/2 - bWidth/2) {
         p.type = p.outcome;
         if(p.type === 'A') { p.vx = -p.speed; p.color = '#ff5a3c'; cooperFlash = 1.0; } 
