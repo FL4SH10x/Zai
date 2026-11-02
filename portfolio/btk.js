@@ -133,15 +133,15 @@
     ctxG.beginPath(); ctxG.moveTo(curX, 0); ctxG.lineTo(curX, h); ctxG.stroke();
     ctxAB.setLineDash([]); ctxG.setLineDash([]);
     (function initBTK() {
-  // --- NEW: FETCH BdG DATA ---
-  let bdgData = null;
-  fetch('assets/bdg_data.json')
-    .then(response => response.json())
-    .then(data => {
-      bdgData = data;
-      drawAll(); // Redraw once data loads
-    })
-    .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
+    // --- NEW: FETCH BdG DATA ---
+    let bdgData = null;
+    fetch('assets/bdg_data.json')
+      .then(response => response.json())
+      .then(data => {
+        bdgData = data;
+        drawAll(); // Redraw once data loads
+      })
+      .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
   }
 
   function drawSchematic() {
