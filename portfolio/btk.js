@@ -132,16 +132,36 @@
     ctxAB.beginPath(); ctxAB.moveTo(curX, 0); ctxAB.lineTo(curX, h); ctxAB.stroke();
     ctxG.beginPath(); ctxG.moveTo(curX, 0); ctxG.lineTo(curX, h); ctxG.stroke();
     ctxAB.setLineDash([]); ctxG.setLineDash([]);
-    (function initBTK() {
-    // --- NEW: FETCH BdG DATA ---
-    let bdgData = null;
-    fetch('assets/bdg_data.json')
-      .then(response => response.json())
-      .then(data => {
-        bdgData = data;
-        drawAll(); // Redraw once data loads
-      })
-      .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
+    if (bdgData) {
+      let currentZStr = currentZ.toFixed(2);
+      if (bdgData[currentZStr]) {
+        // Draw a subtle "Numerical Data Active" indicator
+        ctxAB.fillStyle = 'rgba(63, 224, 255, 0.2)';
+        ctxAB.fillText('BdG NUMERICAL DATA OVERLAY ACTIVE', w - 210*dpr, 12*dpr);
+        
+        bdgData[currentZStr].forEach(pt => {
+          let px = (pt.E / 3) * w;
+          
+          // Draw A (Red circles)
+          let pyA = h - (pt.A * h * 0.9);
+          ctxAB.beginPath(); ctxAB.arc(px, pyA, 3*dpr, 0, Math.PI*2);
+          ctxAB.fillStyle = '#bg'; ctxAB.fill();
+          ctxAB.strokeStyle = '#ff5a3c'; ctxAB.stroke();
+          
+          // Draw B (Cyan circles)
+          let pyB = h - (pt.B * h * 0.9);
+          ctxAB.beginPath(); ctxAB.arc(px, pyB, 3*dpr, 0, Math.PI*2);
+          ctxAB.fillStyle = '#bg'; ctxAB.fill();
+          ctxAB.strokeStyle = '#3fe0ff'; ctxAB.stroke();
+          
+          // Draw G (Amber circles)
+          let pyG = h - ((pt.G / maxG) * h * 0.9);
+          ctxG.beginPath(); ctxG.arc(px, pyG, 3*dpr, 0, Math.PI*2);
+          ctxG.fillStyle = '#bg'; ctxG.fill();
+          ctxG.strokeStyle = '#ffb347'; ctxG.stroke();
+        });
+      }
+    }
   }
 
   function drawSchematic() {
