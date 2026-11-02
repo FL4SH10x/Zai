@@ -1,4 +1,13 @@
 (function initBTK() {
+  // --- NEW: FETCH BdG DATA ---
+  let bdgData = null;
+  fetch('assets/bdg_data.json')
+    .then(response => response.json())
+    .then(data => {
+      bdgData = data;
+      drawAll(); // Redraw once data loads
+    })
+    .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
   function calcBTK(E_over_D, Z) {
     let A, B, C, D, G;
     const E = Math.max(1e-9, E_over_D);
@@ -123,6 +132,16 @@
     ctxAB.beginPath(); ctxAB.moveTo(curX, 0); ctxAB.lineTo(curX, h); ctxAB.stroke();
     ctxG.beginPath(); ctxG.moveTo(curX, 0); ctxG.lineTo(curX, h); ctxG.stroke();
     ctxAB.setLineDash([]); ctxG.setLineDash([]);
+    (function initBTK() {
+  // --- NEW: FETCH BdG DATA ---
+  let bdgData = null;
+  fetch('assets/bdg_data.json')
+    .then(response => response.json())
+    .then(data => {
+      bdgData = data;
+      drawAll(); // Redraw once data loads
+    })
+    .catch(err => console.warn("BdG data not found yet. Overlay disabled."));
   }
 
   function drawSchematic() {
