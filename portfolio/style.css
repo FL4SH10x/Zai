@@ -388,10 +388,24 @@ body.theme-amber {
 /* --- HUD OVERLAY & MOBILE OPTIMIZATION --- */
 
 /* Desktop defaults for the new wrapper */
-.nav-overlay { display: flex; flex: 1; justify-content: space-between; align-items: center; }
+.nav-overlay { 
+  display: flex; 
+  flex: 1; 
+  align-items: center; 
+}
+.top-center { 
+  display: flex; 
+  flex: 1; 
+  justify-content: center; 
+  gap: 1.5rem; 
+}
+.top-right { 
+  flex-shrink: 0; 
+  display: flex;
+  align-items: center;
+}
 .mobile-menu-btn { display: none; }
 .nav-actions { display: flex; align-items: center; gap: 10px; margin-left: 10px; }
-
 /* Trigger the mobile menu overlay below 900px */
 @media (max-width: 900px) {
   .top-center { display: flex; flex-direction: column; gap: 2rem; align-items: center; font-size: 1.2rem; }
@@ -419,7 +433,6 @@ body.theme-amber {
   .mobile-menu-btn:hover { background: rgba(63, 224, 255, 0.1); }
 }
 
-/* Core Mobile Layout Fixes (Typography, Email Overflow, Padding) */
 /* Core Mobile Layout Fixes (Typography, Email Overflow, Padding) */
 @media (max-width: 768px) {
   /* Fix the huge headspace by reducing global top padding and removing 100vh */
