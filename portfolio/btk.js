@@ -147,6 +147,7 @@
   function drawSchematic() {
     const dpr = window.devicePixelRatio || 1;
     const w = cSch.width, h = cSch.height;
+    const logicalW = w / dpr; // Get screen width to calculate dynamic text
     ctxSch.clearRect(0, 0, w, h);
     
     ctxSch.fillStyle = 'rgba(63, 224, 255, 0.05)'; ctxSch.fillRect(0, 0, w/2, h);
@@ -155,14 +156,28 @@
     let bWidth = Math.max(2, currentZ * 10 * dpr);
     ctxSch.fillStyle = '#6b8794'; ctxSch.fillRect(w/2 - bWidth/2, 0, bWidth, h);
     
-    ctxSch.fillStyle = '#cfe8f2'; ctxSch.font = `${12*dpr}px 'JetBrains Mono'`;
-    ctxSch.fillText('NORMAL (N)', 10*dpr, 20*dpr); ctxSch.fillText('SUPERCONDUCTOR (S)', w/2 + 10*dpr, 20*dpr);
+    // --- SMART CANVAS TEXT RENDERING ---
+    ctxSch.fillStyle = '#cfe8f2'; 
+    
+    // Shrink font and text slightly on narrow mobile screens
+    let fontSize = logicalW < 350 ? 9 * dpr : 12 * dpr;
+    let textN = logicalW < 300 ? 'N' : 'NORMAL (N)';
+    let textS = logicalW < 300 ? 'S' : 'SUPERCONDUCTOR (S)';
+    
+    ctxSch.font = `${fontSize}px 'JetBrains Mono'`;
+    ctxSch.textAlign = 'center'; // Center the text instead of pushing from the left
+    
+    // Draw text exactly in the middle of each half
+    ctxSch.fillText(textN, w/4, 20*dpr); 
+    ctxSch.fillText(textS, (3*w)/4, 20*dpr);
     
     if (cooperFlash > 0) {
       ctxSch.fillStyle = `rgba(255, 179, 71, ${cooperFlash})`;
-      ctxSch.fillText('2e-', w/2 + 10*dpr, h/2 - 10*dpr);
+      ctxSch.fillText('2e-', (3*w)/4, h/2 - 10*dpr);
       cooperFlash -= 0.05;
     }
+    
+    ctxSch.textAlign = 'left'; // Reset alignment for future draws
     
     for(let i=particles.length-1; i>=0; i--) {
       let p = particles[i];
@@ -181,7 +196,6 @@
       if(p.x < 0 || p.x > w) particles.splice(i, 1);
     }
   }
-
   function updateTally() {
     let counts = {A:0, B:0, C:0, D:0};
     history.forEach(r => counts[r]++);

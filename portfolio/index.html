@@ -34,19 +34,28 @@
 
   <header class="top-bar">
     <div class="top-left">J. PARASHAR // PHYSICS</div>
-    <nav class="top-center">
-      <a href="#sec-01" class="nav-link">01 SIGNAL</a>
-      <a href="#sec-02" class="nav-link">02 RESEARCH</a>
-      <a href="#sec-03" class="nav-link">03 INSTRUMENT</a>
-      <a href="#sec-04" class="nav-link">04 FIELD KIT</a>
-      <a href="#sec-05" class="nav-link">05 OFF-DUTY</a>
-      <a href="#sec-06" class="nav-link">06 COMMS</a>
-    </nav>
-    <div class="top-right">
-      <span id="loop-counter" class="mono highlight" style="display: none; margin-right: 15px;">LOOP 0000</span>
-      <span id="local-time" class="mono">00:00:00</span>
-      <button id="btn-cmd" class="btn btn-alt" style="padding: 2px 6px; font-size: 0.7rem; margin-left: 10px;">CMD</button>
-      <a href="assets/Jai_Parashar_CV.pdf" class="btn-text" style="margin-left: 10px;" target="_blank">CV &darr;</a>
+    
+    <!-- NEW: Mobile Menu Toggle Button -->
+    <button id="mobile-menu-btn" class="mobile-menu-btn mono">[ MENU ]</button>
+    
+    <!-- NEW: Wrapped Navigation for Overlay -->
+    <div id="mobile-nav-overlay" class="nav-overlay">
+      <nav class="top-center">
+        <a href="#sec-01" class="nav-link">01 SIGNAL</a>
+        <a href="#sec-02" class="nav-link">02 RESEARCH</a>
+        <a href="#sec-03" class="nav-link">03 INSTRUMENT</a>
+        <a href="#sec-04" class="nav-link">04 FIELD KIT</a>
+        <a href="#sec-05" class="nav-link">05 OFF-DUTY</a>
+        <a href="#sec-06" class="nav-link">06 COMMS</a>
+      </nav>
+      <div class="top-right">
+        <span id="loop-counter" class="mono highlight" style="display: none; margin-right: 15px;">LOOP 0000</span>
+        <span id="local-time" class="mono">00:00:00</span>
+        <div class="nav-actions">
+          <button id="btn-cmd" class="btn btn-alt" style="padding: 2px 6px; font-size: 0.7rem;">CMD</button>
+          <a href="assets/Jai_Parashar_CV.pdf" class="btn-text" target="_blank">CV &darr;</a>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -320,7 +329,6 @@
 
   <footer>
     <p class="mono">LAST UPDATED: NOVEMBER 2026</p>
-    <p class="mono dim" style="font-size: 0.8rem; margin-top: 0.5rem;">Built with plain HTML, CSS and JavaScript.</p>
   </footer>
 
   <script src="main.js"></script>

@@ -7,7 +7,25 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+// --- MOBILE MENU HUD LOGIC ---
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+const navOverlay = document.getElementById('mobile-nav-overlay');
+const navLinksMobile = document.querySelectorAll('.nav-link');
 
+if (mobileMenuBtn && navOverlay) {
+  mobileMenuBtn.addEventListener('click', () => {
+    navOverlay.classList.toggle('active');
+    mobileMenuBtn.textContent = navOverlay.classList.contains('active') ? '[ CLOSE ]' : '[ MENU ]';
+  });
+
+  // Auto-close menu when a link is tapped
+  navLinksMobile.forEach(link => {
+    link.addEventListener('click', () => {
+      navOverlay.classList.remove('active');
+      mobileMenuBtn.textContent = '[ MENU ]';
+    });
+  });
+}
 // --- SCROLL SPY FOR NAVIGATION ---
 const sections = document.querySelectorAll('section');
 const navLinks = document.querySelectorAll('.nav-link');
